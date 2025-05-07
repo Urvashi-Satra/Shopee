@@ -7,10 +7,22 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CategoryResponse {
 
     private List<CategoryDTO> content;
 
+    public CategoryResponse(List<CategoryDTO> content) {
+        this.content = content;
+    }
+
+    public CategoryResponse(){
+    }
+
+    public List<CategoryDTO> getContent() {
+        return content;
+    }
+
+    public void setContent(List<CategoryDTO> content) {
+        this.content = content;
+    }
 }
