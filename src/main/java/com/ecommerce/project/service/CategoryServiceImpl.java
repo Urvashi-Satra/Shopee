@@ -30,34 +30,27 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public CategoryResponse getAllCategories() {
-
         List<Category> categories = categoryRepository.findAll();
-        if(categories.isEmpty()){
+        if (categories.isEmpty())
             throw new APIException("No category created till now.");
-        }
+
         List<CategoryDTO> categoryDTOS = categories.stream()
-                                                    .map(category -> modelMapper.map(category,CategoryDTO.class))
-                                                    .collect(Collectors.toList());
+                .map(category -> modelMapper.map(category, CategoryDTO.class))
+                .toList();
+
         CategoryResponse categoryResponse = new CategoryResponse();
         categoryResponse.setContent(categoryDTOS);
         return categoryResponse;
-        //return categoryRepository.findAll();
     }
 
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        Category category = modelMapper.map(categoryDTO,Category.class);
+        Category category = modelMapper.map(categoryDTO, Category.class);
         Category categoryFromDb = categoryRepository.findByCategoryName(category.getCategoryName());
-
-        if(categoryFromDb != null){
-            throw new APIException("Category with the name " +category.getCategoryName()+ " already exists !!!");
-
-        }
-//        category.setCategoryId(nextId++);
-//        categories.add(category);
-       Category savedCategory= categoryRepository.save(category);
-        CategoryDTO savedCategoryDTO = modelMapper.map(savedCategory,CategoryDTO.class);
-        return savedCategoryDTO;
+        if (categoryFromDb != null)
+            throw new APIException("Category with the name " + category.getCategoryName() + " already exists !!!");
+        Category savedCategory = categoryRepository.save(category);
+        return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 
     @Override
