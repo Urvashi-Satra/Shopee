@@ -8,6 +8,9 @@ import com.ecommerce.project.payload.CategoryResponse;
 import com.ecommerce.project.repository.CategoryRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -29,8 +32,12 @@ public class CategoryServiceImpl implements CategoryService{
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryResponse getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
+    public CategoryResponse getAllCategories(Integer pageNumber,Integer pageSize) {
+
+        Pageable pageDetails = PageRequest.of(pageNumber,pageSize);
+        Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
+        List<Category> categories = categoryPage.getContent();
+//        List<Category> categories = categoryRepository.findAll();
         if (categories.isEmpty())
             throw new APIException("No category created till now.");
 
@@ -54,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public String deleteCategory(Long categoryId) {
+    public CategoryDTO deleteCategory(Long categoryId) {
 //        List<Category> categories = categoryRepository.findAll();
 //        Category category = categoryRepository.findById(categoryId)
 //                .orElseThrow(
@@ -73,23 +80,24 @@ public class CategoryServiceImpl implements CategoryService{
 
 //        categories.remove(categoryDetail);
         categoryRepository.delete(category);
-        return "Category with categoryId: "+categoryId+" Deleted successfully";
+//        return "Category with categoryId: "+categoryId+" Deleted successfully";
+        return modelMapper.map(category,CategoryDTO.class);
     }
 
     @Override
-    public Category updateCategory(Category category, Long categoryId) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryId) {
 //        Optional<Category> savedCategoryOptional = categoryRepository.findById(categoryId);
 
         Category savedCategory = categoryRepository.findById(categoryId)
                                                     .orElseThrow(
                                                             () -> new ResponseStatusException(HttpStatus.NOT_FOUND ,
                                                                     "Resource not found"));
-        System.out.println(category);
-
+//        System.out.println(category);
+        Category category=modelMapper.map(categoryDTO,Category.class);
         category.setCategoryId(categoryId);
         category.setCategoryName(category.getCategoryName());
         savedCategory = categoryRepository.save(category);
-        return savedCategory;
+        return modelMapper.map(savedCategory,CategoryDTO.class);
     }
 }
 
