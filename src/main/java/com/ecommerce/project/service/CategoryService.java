@@ -11,7 +11,7 @@ import java.util.List;
 public interface CategoryService {
 
 //    List<Category> getAllCategories();
-    CategoryResponse getAllCategories(Integer pageNumber,Integer pageSize);
+    CategoryResponse getAllCategories(Integer pageNumber,Integer pageSize,String sortBy ,String sortOrder);
 
 //    void createCategory(Category category);
     CategoryDTO createCategory(CategoryDTO category);
